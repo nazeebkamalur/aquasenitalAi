@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AquaSentinel AI | User Dashboard</title>
+
+    <link rel="stylesheet" href="../static/css/dashboard.css" />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">🌧️</div>
+
+          <div>
+            <h2>AquaSentinel</h2>
+            <span>AI Early Warning</span>
+          </div>
+        </div>
+
+        <nav>
+          <button
+            class="nav-item active"
+            onclick="scrollToSection('dashboardTop', this)"
+          >
+            🏠 Dashboard
+          </button>
+
+          <button
+            class="nav-item"
+            onclick="scrollToSection('rainfallSection', this)"
+          >
+            🌧️ Rainfall
+          </button>
+
+          <button
+            class="nav-item"
+            onclick="scrollToSection('floodRiskSection', this)"
+          >
+            🌊 Flood Risk
+          </button>
+
+          <button
+            class="nav-item"
+            onclick="scrollToSection('riskMapSection', this)"
+          >
+            🗺️ Risk Map
+          </button>
+
+          <button
+            class="nav-item"
+            onclick="scrollToSection('alertsSection', this)"
+          >
+            🔔 Alerts
+          </button>
+        </nav>
+
+        <button class="logout" onclick="logout()">🚪 Logout</button>
+      </aside>
+
+      <!-- MAIN -->
+
+      <main class="main-content">
+        <header class="topbar" id="dashboardTop">
+          <div>
+            <p class="eyebrow">USER DASHBOARD</p>
+
+            <h1>
+              Welcome,
+              <span id="userName">User</span>
+              👋
+            </h1>
+
+            <p class="muted">Monitor rainfall and flood risk in your area.</p>
+          </div>
+
+          <div class="profile">
+            <div class="avatar">U</div>
+
+            <div>
+              <strong id="profileName"> Aqua User </strong>
+
+              <small> Public User </small>
+            </div>
+          </div>
+        </header>
+
+        <!-- ALERT -->
+
+        <section class="alert-card" id="alertsSection">
+          <div class="alert-icon">⚠️</div>
+
+          <div>
+            <strong id="alertTitle"> Weather Risk Alert </strong>
+
+            <p id="alertMessage">Loading current risk information...</p>
+          </div>
+
+          <span id="alertBadge" class="status-badge warning"> LOADING </span>
+        </section>
+
+        <!-- STAT CARDS -->
+
+        <section class="stats-grid">
+          <!-- RAINFALL -->
+
+          <div class="stat-card">
+            <div class="stat-icon blue">🌧️</div>
+
+            <div>
+              <span> Rainfall </span>
+
+              <strong id="rainfallValue"> -- mm </strong>
+
+              <small> Latest prediction </small>
+            </div>
+          </div>
+
+          <!-- FLOOD PROBABILITY -->
+
+          <div class="stat-card">
+            <div class="stat-icon purple">🌊</div>
+
+            <div>
+              <span> Flood Probability </span>
+
+              <strong id="floodProbability"> --% </strong>
+
+              <small id="riskLevel"> Loading risk... </small>
+            </div>
+          </div>
+
+          <!-- SAFETY -->
+
+          <div class="stat-card">
+            <div class="stat-icon green">🛡️</div>
+
+            <div>
+              <span> Safety Level </span>
+
+              <strong id="safetyLevel"> -- </strong>
+
+              <small> Current assessment </small>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTENT GRID -->
+
+        <section class="content-grid">
+          <!-- RAINFALL -->
+
+          <div class="panel large" id="rainfallSection">
+            <div class="panel-header">
+              <div>
+                <h2>Rainfall Information</h2>
+
+                <p>Current rainfall prediction</p>
+              </div>
+
+              <span class="live"> ● LIVE </span>
+            </div>
+
+            <div class="chart-placeholder">
+              <div class="rain-bars">
+                <div id="rainBar1" style="height: 20%">
+                  <span>06</span>
+                </div>
+
+                <div id="rainBar2" style="height: 30%">
+                  <span>09</span>
+                </div>
+
+                <div id="rainBar3" style="height: 45%">
+                  <span>12</span>
+                </div>
+
+                <div id="rainBar4" style="height: 60%">
+                  <span>15</span>
+                </div>
+
+                <div id="rainBar5" style="height: 50%">
+                  <span>18</span>
+                </div>
+
+                <div id="rainBar6" style="height: 35%">
+                  <span>21</span>
+                </div>
+
+                <div id="rainBar7" style="height: 25%">
+                  <span>00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FLOOD RISK -->
+
+          <div class="panel" id="floodRiskSection">
+            <div class="panel-header">
+              <div>
+                <h2>Flood Risk</h2>
+
+                <p>Current AI assessment</p>
+              </div>
+            </div>
+
+            <div class="risk-circle">
+              <div>
+                <strong id="riskCircleValue"> --% </strong>
+
+                <span> Risk </span>
+              </div>
+            </div>
+
+            <div id="riskLabel" class="risk-label moderate">CALCULATING</div>
+          </div>
+        </section>
+
+        <!-- PREDICTION DETAILS -->
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>AI Prediction Details</h2>
+
+              <p>Latest AquaSentinel prediction</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue">📊</div>
+
+              <div>
+                <span> Risk Score </span>
+
+                <strong id="riskScore"> -- </strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon purple">🎯</div>
+
+              <div>
+                <span> Confidence </span>
+
+                <strong id="confidence"> --% </strong>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon green">🌊</div>
+
+              <div>
+                <span> Inundation Area </span>
+
+                <strong id="inundationArea"> -- km² </strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MAP -->
+
+        <section class="panel" id="riskMapSection">
+          <div class="panel-header">
+            <div>
+              <h2>Flood Risk Map</h2>
+
+              <p>Location-based risk visualization</p>
+            </div>
+
+            <button class="small-button" onclick="openMap()">Open Map</button>
+          </div>
+
+          <div class="map-placeholder">
+            <div class="map-grid"></div>
+
+            <div class="map-marker marker-one">📍</div>
+
+            <div class="map-marker marker-two">📍</div>
+
+            <div class="map-center">
+              <strong id="mapRegion"> Your Area </strong>
+
+              <span id="mapRisk"> Loading risk zone... </span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../static/js/user.js?v=2"></script>
+  </body>
+</html>

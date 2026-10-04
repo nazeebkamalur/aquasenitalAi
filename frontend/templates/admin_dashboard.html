@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AquaSentinel AI - Admin Dashboard</title>
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="../static/css/dashboard.css" />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+      /*
+         * =====================================================
+         * ADMIN DASHBOARD ADDITIONAL STYLES
+         * =====================================================
+         */
+
+      .government-map {
+        width: 100%;
+        height: 450px !important;
+        min-height: 450px;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      .map-instruction {
+        margin-top: 10px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .selected-location-card {
+        display: none;
+        margin-top: 14px;
+        padding: 14px 16px;
+        border: 1px solid #c7d2fe;
+        background: #eef2ff;
+        border-radius: 12px;
+      }
+
+      .selected-location-card.active {
+        display: block;
+      }
+
+      .selected-location-card strong {
+        display: block;
+        color: #312e81;
+        margin-bottom: 6px;
+      }
+
+      .selected-location-card span {
+        color: #475569;
+        font-size: 12px;
+      }
+
+      .location-coordinates {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+
+      .location-coordinate {
+        font-size: 12px;
+        color: #475569;
+      }
+
+      .location-coordinate b {
+        color: #312e81;
+      }
+
+      .dynamic-controls {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 14px;
+        background: #faf5ff;
+        border: 1px solid #e9d5ff;
+      }
+
+      .dynamic-controls h3 {
+        margin-bottom: 6px;
+        color: #581c87;
+        font-size: 15px;
+      }
+
+      .dynamic-controls p {
+        color: #64748b;
+        font-size: 12px;
+        margin-bottom: 14px;
+      }
+
+      .location-input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .location-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .location-input-group label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #475569;
+      }
+
+      .location-input-group input {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d8dee9;
+        border-radius: 9px;
+        outline: none;
+        font-size: 13px;
+        background: white;
+      }
+
+      .location-input-group input:focus {
+        border-color: #818cf8;
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12);
+      }
+
+      .location-button-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .secondary-button {
+        border: none;
+        padding: 11px 15px;
+        border-radius: 9px;
+        background: #e0e7ff;
+        color: #4338ca;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      .secondary-button:hover {
+        background: #c7d2fe;
+      }
+
+      .prediction-result {
+        display: none;
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+      }
+
+      .prediction-result.active {
+        display: block;
+      }
+
+      .prediction-result h3 {
+        margin-bottom: 14px;
+        color: #1e293b;
+      }
+
+      .prediction-result-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .prediction-result-item {
+        background: white;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .prediction-result-item span {
+        display: block;
+        font-size: 10px;
+        color: #94a3b8;
+        margin-bottom: 5px;
+      }
+
+      .prediction-result-item strong {
+        font-size: 17px;
+        color: #1e293b;
+      }
+
+      .map-legend {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 10px 12px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+        font-size: 11px;
+        color: #475569;
+      }
+
+      .map-legend-title {
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: #1e293b;
+      }
+
+      .legend-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0;
+      }
+
+      .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .legend-low {
+        background: #22c55e;
+      }
+
+      .legend-moderate {
+        background: #f59e0b;
+      }
+
+      .legend-high {
+        background: #f97316;
+      }
+
+      .legend-critical {
+        background: #ef4444;
+      }
+
+      .map-selection-marker {
+        font-size: 30px;
+        line-height: 30px;
+      }
+
+      .system-message {
+        margin-top: 12px;
+        padding: 10px 14px;
+        border-radius: 9px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 12px;
+        display: none;
+      }
+
+      .system-message.active {
+        display: block;
+      }
+
+      @media (max-width: 800px) {
+        .location-input-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .prediction-result-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .government-map {
+          height: 380px !important;
+          min-height: 380px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">🌧️</div>
+
+          <div>
+            <h2>AquaSentinel</h2>
+            <span>AI EARLY WARNING</span>
+          </div>
+        </div>
+
+        <nav>
+          <button
+            class="nav-item active"
+            onclick="scrollToSection('dashboardTop')"
+          >
+            📊 Dashboard
+          </button>
+
+          <button class="nav-item" onclick="scrollToSection('gisSection')">
+            🗺️ GIS Map
+          </button>
+
+          <button
+            class="nav-item"
+            onclick="scrollToSection('predictionEngine')"
+          >
+            🤖 AI Prediction
+          </button>
+
+          <button class="nav-item" onclick="scrollToSection('systemStatus')">
+            ⚙️ System Status
+          </button>
+
+          <button class="nav-item" onclick="scrollToSection('dataSources')">
+            🌐 Data Sources
+          </button>
+        </nav>
+
+        <button class="logout" onclick="logout()">🚪 Logout</button>
+      </aside>
+
+      <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+      <main class="main-content">
+        <!-- =================================================
+             TOP BAR
+             ================================================= -->
+
+        <section class="topbar" id="dashboardTop">
+          <div>
+            <div class="eyebrow">ADMINISTRATOR CONTROL CENTER</div>
+
+            <h1>AquaSentinel AI</h1>
+
+            <p class="muted">Heavy rainfall and flood early warning system</p>
+          </div>
+
+          <div class="profile">
+            <div>
+              <strong id="profileName"> Administrator </strong>
+
+              <small> System Administrator </small>
+            </div>
+
+            <div class="avatar admin-avatar">A</div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             ALERT
+             ================================================= -->
+
+        <section class="alert-card">
+          <div class="alert-icon">⚠️</div>
+
+          <div>
+            <strong> Current Flood Risk Assessment </strong>
+
+            <p>AI prediction and environmental monitoring are active.</p>
+          </div>
+
+          <span class="status-badge warning"> MONITORING </span>
+        </section>
+
+        <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
+        <section class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">🌧️</div>
+
+            <div>
+              <span> Rainfall </span>
+
+              <strong> -- </strong>
+
+              <small> Latest prediction </small>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon purple">🌊</div>
+
+            <div>
+              <span> Flood Probability </span>
+
+              <strong> -- </strong>
+
+              <small> AI assessment </small>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon red">⚠️</div>
+
+            <div>
+              <span> Risk Level </span>
+
+              <strong> -- </strong>
+
+              <small> Current assessment </small>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">🏗️</div>
+
+            <div>
+              <span> Infrastructure </span>
+
+              <strong> -- </strong>
+
+              <small> Data status </small>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             GIS MAP
+             ================================================= -->
+
+        <section class="panel" id="gisSection">
+          <div class="panel-header">
+            <div>
+              <h2>🗺️ Dynamic GIS Monitoring Map</h2>
+
+              <p>Select any location to run a live prediction</p>
+            </div>
+
+            <span class="live"> ● LIVE GIS </span>
+          </div>
+
+          <!-- MAP -->
+
+          <div class="government-map" id="adminMap"></div>
+
+          <div class="map-instruction">
+            📍
+            <strong> Click anywhere on the map </strong>
+            to select a location for dynamic prediction.
+          </div>
+
+          <!-- SELECTED LOCATION -->
+
+          <div class="selected-location-card" id="mapSelectedLocation">
+            <strong> 📍 Selected Location </strong>
+
+            <div class="location-coordinates">
+              <div class="location-coordinate">
+                <b> Latitude: </b>
+
+                <span id="mapLatitude"> -- </span>
+              </div>
+
+              <div class="location-coordinate">
+                <b> Longitude: </b>
+
+                <span id="mapLongitude"> -- </span>
+              </div>
+
+              <div class="location-coordinate">
+                <b> Region: </b>
+
+                <span id="mapRegion"> Selected Location </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             AI PREDICTION ENGINE
+             ================================================= -->
+
+        <section class="panel" id="predictionEngine">
+          <div class="panel-header">
+            <div>
+              <h2>🤖 AI Prediction Engine</h2>
+
+              <p>Common AI pipeline for seeded and dynamic data</p>
+            </div>
+
+            <span class="live"> ● AI READY </span>
+          </div>
+
+          <!-- MODE SWITCH -->
+
+          <div class="mode-card">
+            <div>
+              <h2>Prediction Mode</h2>
+
+              <p>
+                Choose between demonstration data and live location-based
+                prediction.
+              </p>
+            </div>
+
+            <div class="mode-switch">
+              <button
+                class="mode-button active-mode"
+                id="seededModeButton"
+                onclick="selectMode('SEEDED')"
+              >
+                🧪 Seeded
+              </button>
+
+              <button
+                class="mode-button"
+                id="dynamicModeButton"
+                onclick="selectMode('DYNAMIC')"
+              >
+                🌐 Dynamic
+              </button>
+            </div>
+          </div>
+
+          <!-- PIPELINE -->
+
+          <div class="pipeline">
+            <div class="pipeline-step">
+              <span> 1 </span>
+
+              <strong> Data Input </strong>
+            </div>
+
+            <div class="pipeline-line"></div>
+
+            <div class="pipeline-step">
+              <span> 2 </span>
+
+              <strong> Preprocessing </strong>
+            </div>
+
+            <div class="pipeline-line"></div>
+
+            <div class="pipeline-step">
+              <span> 3 </span>
+
+              <strong> Features </strong>
+            </div>
+
+            <div class="pipeline-line"></div>
+
+            <div class="pipeline-step">
+              <span> 4 </span>
+
+              <strong> Rainfall AI </strong>
+            </div>
+
+            <div class="pipeline-line"></div>
+
+            <div class="pipeline-step">
+              <span> 5 </span>
+
+              <strong> Flood AI </strong>
+            </div>
+
+            <div class="pipeline-line"></div>
+
+            <div class="pipeline-step">
+              <span> 6 </span>
+
+              <strong> Risk Engine </strong>
+            </div>
+          </div>
+
+          <!-- SEEDED CONTROLS -->
+
+          <div
+            id="seededControls"
+            class="dynamic-controls"
+            style="background: #f8fafc; border-color: #e2e8f0"
+          >
+            <h3>🧪 Seeded Demonstration</h3>
+
+            <p>Run the AI model using the predefined rainfall scenarios.</p>
+
+            <button
+              class="run-button"
+              id="seededPredictionButton"
+              onclick="runPrediction()"
+            >
+              ▶ Run AI Prediction
+            </button>
+          </div>
+
+          <!-- DYNAMIC CONTROLS -->
+
+          <div
+            id="dynamicControls"
+            class="dynamic-controls"
+            style="display: none"
+          >
+            <h3>🌐 Dynamic Location Prediction</h3>
+
+            <p>
+              Select any point on the map or enter coordinates manually. Live
+              weather and satellite data will be used.
+            </p>
+
+            <div class="location-input-grid">
+              <div class="location-input-group">
+                <label for="dynamicLatitude"> Latitude </label>
+
+                <input
+                  type="number"
+                  id="dynamicLatitude"
+                  step="0.000001"
+                  placeholder="Example: 17.3850"
+                />
+              </div>
+
+              <div class="location-input-group">
+                <label for="dynamicLongitude"> Longitude </label>
+
+                <input
+                  type="number"
+                  id="dynamicLongitude"
+                  step="0.000001"
+                  placeholder="Example: 78.4867"
+                />
+              </div>
+            </div>
+
+            <div class="location-input-group">
+              <label for="dynamicRegion"> Region / Location Name </label>
+
+              <input
+                type="text"
+                id="dynamicRegion"
+                placeholder="Selected Location"
+              />
+            </div>
+
+            <br />
+
+            <div class="location-button-row">
+              <button class="secondary-button" onclick="useMapLocation()">
+                📍 Use Selected Map Location
+              </button>
+
+              <button
+                class="run-button"
+                id="dynamicPredictionButton"
+                onclick="runPrediction()"
+              >
+                🌐 Run Dynamic Prediction
+              </button>
+            </div>
+          </div>
+
+          <!-- SYSTEM MESSAGE -->
+
+          <div id="predictionMessage" class="system-message"></div>
+
+          <!-- PREDICTION RESULT -->
+
+          <div id="predictionResult" class="prediction-result">
+            <h3>📊 AI Prediction Result</h3>
+
+            <div class="prediction-result-grid">
+              <div class="prediction-result-item">
+                <span> Predicted Rainfall </span>
+
+                <strong id="resultRainfall"> -- </strong>
+              </div>
+
+              <div class="prediction-result-item">
+                <span> Flood Probability </span>
+
+                <strong id="resultFloodProbability"> -- </strong>
+              </div>
+
+              <div class="prediction-result-item">
+                <span> Risk Level </span>
+
+                <strong id="resultRiskLevel"> -- </strong>
+              </div>
+
+              <div class="prediction-result-item">
+                <span> Risk Score </span>
+
+                <strong id="resultRiskScore"> -- </strong>
+              </div>
+
+              <div class="prediction-result-item">
+                <span> Inundation Area </span>
+
+                <strong id="resultInundationArea"> -- </strong>
+              </div>
+
+              <div class="prediction-result-item">
+                <span> Confidence </span>
+
+                <strong id="resultConfidence"> -- </strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             SYSTEM STATUS
+             ================================================= -->
+
+        <section class="panel" id="systemStatus">
+          <div class="panel-header">
+            <div>
+              <h2>⚙️ System Status</h2>
+
+              <p>AquaSentinel AI service health</p>
+            </div>
+
+            <span class="live"> ● ONLINE </span>
+          </div>
+
+          <div class="model-status">
+            <div>
+              <span> Backend API </span>
+
+              <strong class="online"> ONLINE </strong>
+            </div>
+
+            <div>
+              <span> AI Prediction Engine </span>
+
+              <strong class="online"> READY </strong>
+            </div>
+
+            <div>
+              <span> Dynamic Weather </span>
+
+              <strong class="online"> LIVE </strong>
+            </div>
+
+            <div>
+              <span> NASA GPM IMERG </span>
+
+              <strong class="online"> AVAILABLE </strong>
+            </div>
+
+            <div>
+              <span> GIS Engine </span>
+
+              <strong class="online"> READY </strong>
+            </div>
+
+            <div>
+              <span> Database </span>
+
+              <strong class="online"> CONNECTED </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             DATA SOURCES
+             ================================================= -->
+
+        <section class="panel" id="dataSources">
+          <div class="panel-header">
+            <div>
+              <h2>🌐 Data Sources</h2>
+
+              <p>Environmental and geospatial data providers</p>
+            </div>
+          </div>
+
+          <div class="source-grid">
+            <div class="source-card">
+              <span> 🌦️ </span>
+
+              <strong> Open-Meteo </strong>
+
+              <small> LIVE </small>
+            </div>
+
+            <div class="source-card">
+              <span> 🛰️ </span>
+
+              <strong> NASA GPM </strong>
+
+              <small> LIVE </small>
+            </div>
+
+            <div class="source-card">
+              <span> 🗺️ </span>
+
+              <strong> OpenStreetMap </strong>
+
+              <small> LIVE </small>
+            </div>
+
+            <div class="source-card">
+              <span> ⛰️ </span>
+
+              <strong> Elevation </strong>
+
+              <small> LIVE </small>
+            </div>
+
+            <div class="source-card">
+              <span> 🌊 </span>
+
+              <strong> Hydrology </strong>
+
+              <small> MONITORING </small>
+            </div>
+
+            <div class="source-card">
+              <span> 🤖 </span>
+
+              <strong> AI Engine </strong>
+
+              <small> ACTIVE </small>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- =========================================================
+     LEAFLET JS
+     ========================================================= -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- =========================================================
+     ADMIN NAVIGATION HELPERS
+     ========================================================= -->
+
+    <script>
+      function scrollToSection(sectionId) {
+        const element = document.getElementById(sectionId);
+
+        if (!element) {
+          return;
+        }
+
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+
+      function showPredictionMessage(message) {
+        const element = document.getElementById("predictionMessage");
+
+        if (!element) {
+          return;
+        }
+
+        element.textContent = message;
+
+        element.classList.add("active");
+      }
+
+      function hidePredictionMessage() {
+        const element = document.getElementById("predictionMessage");
+
+        if (!element) {
+          return;
+        }
+
+        element.classList.remove("active");
+      }
+
+      function displayAdminPredictionResult(prediction) {
+        if (!prediction) {
+          return;
+        }
+
+        const result = document.getElementById("predictionResult");
+
+        if (result) {
+          result.classList.add("active");
+        }
+
+        const rainfall =
+          prediction.predicted_rainfall_mm ??
+          prediction.rainfall ??
+          prediction.rainfall_mm ??
+          0;
+
+        const floodProbability =
+          prediction.flood_probability ?? prediction.floodProbability ?? 0;
+
+        const riskLevel =
+          prediction.risk_level ?? prediction.riskLevel ?? "MINIMAL";
+
+        const riskScore = prediction.risk_score ?? prediction.riskScore ?? 0;
+
+        const inundationArea =
+          prediction.inundation_area_km2 ??
+          prediction.inundation_area ??
+          prediction.inundationArea ??
+          0;
+
+        const confidence = prediction.confidence ?? 0;
+
+        const rainfallElement = document.getElementById("resultRainfall");
+
+        const floodElement = document.getElementById("resultFloodProbability");
+
+        const riskElement = document.getElementById("resultRiskLevel");
+
+        const scoreElement = document.getElementById("resultRiskScore");
+
+        const areaElement = document.getElementById("resultInundationArea");
+
+        const confidenceElement = document.getElementById("resultConfidence");
+
+        if (rainfallElement) {
+          rainfallElement.textContent = `${Number(rainfall).toFixed(2)} mm`;
+        }
+
+        if (floodElement) {
+          floodElement.textContent = `${Number(floodProbability).toFixed(2)}%`;
+        }
+
+        if (riskElement) {
+          riskElement.textContent = String(riskLevel).toUpperCase();
+        }
+
+        if (scoreElement) {
+          scoreElement.textContent = `${Number(riskScore).toFixed(2)}`;
+        }
+
+        if (areaElement) {
+          areaElement.textContent = `${Number(inundationArea).toFixed(2)} km²`;
+        }
+
+        if (confidenceElement) {
+          confidenceElement.textContent = `${Number(confidence).toFixed(2)}%`;
+        }
+      }
+
+      /*
+       * Use coordinates currently selected on the map.
+       */
+
+      function useMapLocation() {
+        const latitude = document.getElementById("mapLatitude")?.textContent;
+
+        const longitude = document.getElementById("mapLongitude")?.textContent;
+
+        const region = document.getElementById("mapRegion")?.textContent;
+
+        if (
+          !latitude ||
+          !longitude ||
+          latitude === "--" ||
+          longitude === "--"
+        ) {
+          showPredictionMessage("Please click a location on the map first.");
+
+          return;
+        }
+
+        const latitudeInput = document.getElementById("dynamicLatitude");
+
+        const longitudeInput = document.getElementById("dynamicLongitude");
+
+        const regionInput = document.getElementById("dynamicRegion");
+
+        if (latitudeInput) {
+          latitudeInput.value = latitude;
+        }
+
+        if (longitudeInput) {
+          longitudeInput.value = longitude;
+        }
+
+        if (regionInput) {
+          regionInput.value = region || "Selected Location";
+        }
+
+        hidePredictionMessage();
+      }
+
+      /*
+       * Receive map selection event.
+       *
+       * map.js dispatches:
+       *
+       * aqua-location-selected
+       */
+
+      document.addEventListener("aqua-location-selected", function (event) {
+        const detail = event.detail || {};
+
+        const latitude = Number(detail.latitude);
+
+        const longitude = Number(detail.longitude);
+
+        const region = detail.region || "Selected Location";
+
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          return;
+        }
+
+        const locationCard = document.getElementById("mapSelectedLocation");
+
+        const latitudeElement = document.getElementById("mapLatitude");
+
+        const longitudeElement = document.getElementById("mapLongitude");
+
+        const regionElement = document.getElementById("mapRegion");
+
+        if (latitudeElement) {
+          latitudeElement.textContent = latitude.toFixed(6);
+        }
+
+        if (longitudeElement) {
+          longitudeElement.textContent = longitude.toFixed(6);
+        }
+
+        if (regionElement) {
+          regionElement.textContent = region;
+        }
+
+        if (locationCard) {
+          locationCard.classList.add("active");
+        }
+
+        /*
+         * Also populate Dynamic inputs
+         * when Dynamic Mode is active.
+         */
+
+        const latitudeInput = document.getElementById("dynamicLatitude");
+
+        const longitudeInput = document.getElementById("dynamicLongitude");
+
+        const regionInput = document.getElementById("dynamicRegion");
+
+        if (latitudeInput) {
+          latitudeInput.value = latitude.toFixed(6);
+        }
+
+        if (longitudeInput) {
+          longitudeInput.value = longitude.toFixed(6);
+        }
+
+        if (regionInput) {
+          regionInput.value = region;
+        }
+
+        showPredictionMessage(
+          `Location selected: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
+        );
+      });
+
+      /*
+       * Receive prediction result from admin.js
+       * if the existing admin.js dispatches it.
+       */
+
+      document.addEventListener("aqua-prediction-complete", function (event) {
+        if (event.detail && event.detail.prediction) {
+          displayAdminPredictionResult(event.detail.prediction);
+        }
+      });
+    </script>
+
+    <!-- =========================================================
+     MAP JS
+     ========================================================= -->
+
+    <script src="../static/js/map.js"></script>
+
+    <!-- =========================================================
+     ADMIN JS
+     ========================================================= -->
+
+    <script src="../static/js/admin.js?v=5"></script>
+  </body>
+</html>

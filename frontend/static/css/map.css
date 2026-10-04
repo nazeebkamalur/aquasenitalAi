@@ -1,0 +1,1178 @@
+/* =========================================================
+   AQUASENTINEL AI
+   INDIA FLOOD RISK MAP
+   map.css
+   ========================================================= */
+
+
+/* =========================================================
+   MAP CONTAINER
+   ========================================================= */
+
+.aqua-map-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+}
+
+
+/* Main Leaflet map */
+
+#adminMap {
+    width: 100%;
+    height: 520px;
+    min-height: 520px;
+    position: relative;
+    z-index: 1;
+}
+
+
+/* Leaflet container */
+
+#adminMap .leaflet-container {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+
+/* Prevent dashboard CSS from breaking Leaflet tiles */
+
+#adminMap .leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+}
+
+#adminMap img.leaflet-tile {
+    max-width: none !important;
+}
+
+#adminMap img {
+    max-width: none;
+}
+
+
+/* =========================================================
+   MAP HEADER
+   ========================================================= */
+
+.map-header {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 17px;
+
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 14px;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.12);
+}
+
+
+.map-header-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #fef2f2;
+
+    font-size: 20px;
+}
+
+
+.map-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+
+.map-header-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+
+.map-header-subtitle {
+    font-size: 11px;
+    color: #64748b;
+}
+
+
+/* =========================================================
+   PRIMARY TARGET REGION BADGE
+   ========================================================= */
+
+.northeast-focus-badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 14px;
+
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid #ddd6fe;
+    border-radius: 12px;
+
+    box-shadow: 0 8px 22px rgba(124, 58, 237, 0.12);
+
+    font-size: 12px;
+    font-weight: 700;
+    color: #6d28d9;
+}
+
+
+.northeast-focus-badge .focus-dot {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #8b5cf6;
+
+    box-shadow: 0 0 0 4px #ede9fe;
+}
+
+
+/* =========================================================
+   FLOOD RISK LEGEND
+   ========================================================= */
+
+.flood-risk-legend {
+    position: absolute;
+    bottom: 22px;
+    right: 18px;
+
+    z-index: 1000;
+
+    min-width: 185px;
+
+    padding: 16px;
+
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+}
+
+
+.flood-risk-legend-title {
+    margin-bottom: 12px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    color: #334155;
+}
+
+
+.risk-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-bottom: 8px;
+
+    font-size: 12px;
+    color: #475569;
+}
+
+
+.risk-legend-item:last-child {
+    margin-bottom: 0;
+}
+
+
+.risk-color {
+    width: 13px;
+    height: 13px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+
+.risk-color.low {
+    background: #22c55e;
+}
+
+.risk-color.moderate {
+    background: #eab308;
+}
+
+.risk-color.high {
+    background: #f97316;
+}
+
+.risk-color.critical {
+    background: #ef4444;
+}
+
+
+/* =========================================================
+   SELECTED LOCATION PANEL
+   ========================================================= */
+
+.map-location-panel {
+    position: absolute;
+    left: 18px;
+    bottom: 22px;
+
+    z-index: 1000;
+
+    width: 285px;
+
+    padding: 17px;
+
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid #e2e8f0;
+    border-radius: 17px;
+
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.map-location-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+}
+
+
+.map-location-panel.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.map-location-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 10px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    color: #8b5cf6;
+}
+
+
+.map-location-name {
+    margin-bottom: 4px;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+
+.map-location-coordinates {
+    font-size: 12px;
+    color: #64748b;
+}
+
+
+.map-location-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 12px;
+    padding: 6px 9px;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #475569;
+}
+
+
+.map-location-status .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #94a3b8;
+}
+
+
+.map-location-status.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+
+.map-location-status.active .status-dot {
+    background: #10b981;
+}
+
+
+/* =========================================================
+   FLOOD PREDICTION RESULT
+   ========================================================= */
+
+.map-prediction-card {
+    position: absolute;
+
+    top: 90px;
+    right: 18px;
+
+    z-index: 999;
+
+    width: 260px;
+
+    padding: 17px;
+
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+
+    border: 1px solid #e2e8f0;
+    border-radius: 17px;
+
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+
+    display: none;
+}
+
+
+.map-prediction-card.visible {
+    display: block;
+}
+
+
+.map-prediction-card.high {
+    border-left: 5px solid #f97316;
+}
+
+
+.map-prediction-card.critical {
+    border-left: 5px solid #ef4444;
+}
+
+
+.map-prediction-card.moderate {
+    border-left: 5px solid #eab308;
+}
+
+
+.map-prediction-card.low {
+    border-left: 5px solid #22c55e;
+}
+
+
+.prediction-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 14px;
+}
+
+
+.prediction-card-title {
+    font-size: 12px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    color: #64748b;
+}
+
+
+.prediction-risk-badge {
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+
+.prediction-risk-badge.low {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+
+.prediction-risk-badge.moderate {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+
+.prediction-risk-badge.high {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+
+.prediction-risk-badge.critical {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   PREDICTION METRICS
+   ========================================================= */
+
+.map-prediction-metrics {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 9px;
+}
+
+
+.map-metric {
+    padding: 10px;
+
+    border-radius: 10px;
+
+    background: #f8fafc;
+
+    border: 1px solid #f1f5f9;
+}
+
+
+.map-metric-label {
+    margin-bottom: 4px;
+
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+
+.map-metric-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+
+/* =========================================================
+   RISK ZONE OVERLAY
+   ========================================================= */
+
+.flood-risk-zone {
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    animation: floodZonePulse 2.5s ease-in-out infinite;
+}
+
+
+.flood-risk-zone.low {
+    background: rgba(34, 197, 94, 0.20);
+    border: 2px solid rgba(34, 197, 94, 0.65);
+}
+
+
+.flood-risk-zone.moderate {
+    background: rgba(234, 179, 8, 0.22);
+    border: 2px solid rgba(234, 179, 8, 0.68);
+}
+
+
+.flood-risk-zone.high {
+    background: rgba(249, 115, 22, 0.25);
+    border: 2px solid rgba(249, 115, 22, 0.72);
+}
+
+
+.flood-risk-zone.critical {
+    background: rgba(239, 68, 68, 0.28);
+    border: 2px solid rgba(239, 68, 68, 0.78);
+}
+
+
+@keyframes floodZonePulse {
+    0% {
+        opacity: 0.65;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.65;
+    }
+}
+
+
+/* =========================================================
+   SELECTED LOCATION MARKER
+   ========================================================= */
+
+.aqua-selected-marker {
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #8b5cf6;
+
+    border: 4px solid #ffffff;
+
+    box-shadow:
+        0 0 0 5px rgba(139, 92, 246, 0.25),
+        0 4px 12px rgba(15, 23, 42, 0.25);
+
+    animation: markerPulse 1.8s infinite;
+}
+
+
+@keyframes markerPulse {
+    0% {
+        box-shadow:
+            0 0 0 0 rgba(139, 92, 246, 0.45),
+            0 4px 12px rgba(15, 23, 42, 0.25);
+    }
+
+    70% {
+        box-shadow:
+            0 0 0 12px rgba(139, 92, 246, 0),
+            0 4px 12px rgba(15, 23, 42, 0.25);
+    }
+
+    100% {
+        box-shadow:
+            0 0 0 0 rgba(139, 92, 246, 0),
+            0 4px 12px rgba(15, 23, 42, 0.25);
+    }
+}
+
+
+/* =========================================================
+   LEAFLET POPUP
+   ========================================================= */
+
+#adminMap .leaflet-popup-content-wrapper {
+    border-radius: 13px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.16);
+}
+
+
+#adminMap .leaflet-popup-content {
+    margin: 13px 15px;
+
+    font-family: Arial, sans-serif;
+
+    color: #334155;
+}
+
+
+#adminMap .leaflet-popup-content b {
+    color: #1e293b;
+}
+
+
+#adminMap .leaflet-popup-tip {
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   LEAFLET CONTROLS
+   ========================================================= */
+
+#adminMap .leaflet-control-zoom {
+    border: none;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+
+#adminMap .leaflet-control-zoom a {
+    width: 34px;
+    height: 34px;
+
+    line-height: 34px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    color: #334155;
+
+    border: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+#adminMap .leaflet-control-zoom a:hover {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+
+#adminMap .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.85);
+
+    font-size: 9px;
+
+    border-radius: 5px 0 0 0;
+}
+
+
+/* =========================================================
+   MAP STATUS BAR
+   ========================================================= */
+
+.map-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 12px 16px;
+
+    background: #ffffff;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+
+.map-status-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.map-status-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #10b981;
+
+    box-shadow: 0 0 0 4px #d1fae5;
+}
+
+
+.map-status-text {
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #475569;
+}
+
+
+.map-status-right {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   DATA SOURCE BADGES
+   ========================================================= */
+
+.map-data-sources {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+}
+
+
+.map-source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 8px;
+
+    border-radius: 7px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    color: #64748b;
+}
+
+
+.map-source-badge.live {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #047857;
+}
+
+
+.map-source-badge .source-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #94a3b8;
+}
+
+
+.map-source-badge.live .source-dot {
+    background: #10b981;
+}
+
+
+/* =========================================================
+   MAP LOADING OVERLAY
+   ========================================================= */
+
+.map-loading-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.78);
+
+    backdrop-filter: blur(4px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+
+.map-loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.map-loading-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    padding: 22px 28px;
+
+    background: #ffffff;
+
+    border-radius: 15px;
+
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15);
+}
+
+
+.map-loading-spinner {
+    width: 34px;
+    height: 34px;
+
+    border: 3px solid #ede9fe;
+    border-top-color: #8b5cf6;
+
+    border-radius: 50%;
+
+    animation: mapSpinner 0.8s linear infinite;
+}
+
+
+.map-loading-text {
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #475569;
+}
+
+
+@keyframes mapSpinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   INDIA / REGION FILTER
+   ========================================================= */
+
+.map-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 14px;
+}
+
+
+.map-filter-label {
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #64748b;
+}
+
+
+.map-filter-select {
+    min-width: 170px;
+
+    padding: 9px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.map-filter-select:focus {
+    border-color: #a78bfa;
+
+    box-shadow:
+        0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+
+/* =========================================================
+   RISK SUMMARY
+   ========================================================= */
+
+.map-risk-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-top: 14px;
+}
+
+
+.map-risk-summary-item {
+    padding: 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+}
+
+
+.map-risk-summary-label {
+    margin-bottom: 5px;
+
+    font-size: 10px;
+
+    color: #94a3b8;
+}
+
+
+.map-risk-summary-value {
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+
+.map-risk-summary-value.high {
+    color: #ea580c;
+}
+
+
+.map-risk-summary-value.critical {
+    color: #dc2626;
+}
+
+
+.map-risk-summary-value.moderate {
+    color: #ca8a04;
+}
+
+
+.map-risk-summary-value.low {
+    color: #16a34a;
+}
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    #adminMap {
+        height: 480px;
+        min-height: 480px;
+    }
+
+    .map-prediction-card {
+        width: 235px;
+    }
+
+    .map-location-panel {
+        width: 255px;
+    }
+}
+
+
+@media (max-width: 850px) {
+
+    .aqua-map-wrapper {
+        min-height: 470px;
+    }
+
+    #adminMap {
+        height: 470px;
+        min-height: 470px;
+    }
+
+    .map-header {
+        left: 12px;
+        top: 12px;
+    }
+
+    .northeast-focus-badge {
+        right: 12px;
+        top: 12px;
+    }
+
+    .map-location-panel {
+        left: 12px;
+        bottom: 12px;
+        width: 240px;
+    }
+
+    .flood-risk-legend {
+        right: 12px;
+        bottom: 12px;
+    }
+
+    .map-prediction-card {
+        top: 80px;
+        right: 12px;
+        width: 230px;
+    }
+
+    .map-risk-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .aqua-map-wrapper {
+        min-height: 430px;
+        border-radius: 15px;
+    }
+
+    #adminMap {
+        height: 430px;
+        min-height: 430px;
+    }
+
+    .map-header {
+        max-width: calc(100% - 24px);
+    }
+
+    .map-header-subtitle {
+        display: none;
+    }
+
+    .northeast-focus-badge {
+        top: 68px;
+        left: 12px;
+        right: auto;
+    }
+
+    .map-prediction-card {
+        top: auto;
+        bottom: 12px;
+        right: 12px;
+
+        width: 210px;
+    }
+
+    .map-location-panel {
+        width: 205px;
+    }
+
+    .flood-risk-legend {
+        top: 120px;
+        bottom: auto;
+        right: 12px;
+
+        min-width: 150px;
+    }
+
+    .map-location-name {
+        font-size: 15px;
+    }
+
+    .map-risk-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    #adminMap {
+        height: 400px;
+        min-height: 400px;
+    }
+
+    .map-header {
+        padding: 9px 11px;
+    }
+
+    .map-header-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .map-header-title {
+        font-size: 12px;
+    }
+
+    .northeast-focus-badge {
+        font-size: 10px;
+        padding: 8px 10px;
+    }
+
+    .map-location-panel {
+        width: calc(100% - 24px);
+        left: 12px;
+        bottom: 12px;
+    }
+
+    .flood-risk-legend {
+        display: none;
+    }
+
+    .map-prediction-card {
+        display: none;
+    }
+
+    .map-risk-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.map-filter-select:focus-visible,
+#adminMap .leaflet-control-zoom a:focus-visible {
+    outline: 3px solid rgba(139, 92, 246, 0.3);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print {
+
+    .map-header,
+    .northeast-focus-badge,
+    .flood-risk-legend,
+    .map-location-panel,
+    .map-prediction-card,
+    .leaflet-control-zoom {
+        display: none !important;
+    }
+
+    #adminMap {
+        height: 650px !important;
+    }
+}

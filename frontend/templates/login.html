@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AquaSentinel AI | Login</title>
+
+    <link rel="stylesheet" href="../static/css/login.css" />
+  </head>
+
+  <body>
+    <div class="page">
+      <div class="login-card">
+        <!-- BRAND -->
+
+        <div class="brand">
+          <div class="logo">🌧️</div>
+
+          <h1>AquaSentinel <span>AI</span></h1>
+
+          <p>Heavy Rainfall &amp; Flood Early Warning System</p>
+        </div>
+
+        <!-- LOGIN FORM -->
+
+        <div class="login-form">
+          <h2>Welcome Back</h2>
+
+          <p class="subtitle">Sign in to access your dashboard</p>
+
+          <!-- EMAIL -->
+
+          <label for="email"> Email Address </label>
+
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+          />
+
+          <!-- PASSWORD -->
+
+          <label for="password"> Password </label>
+
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          />
+
+          <!-- ROLE -->
+
+          <label for="role"> Login As </label>
+
+          <select id="role">
+            <option value="USER">User</option>
+
+            <option value="GOVERNMENT">Government Official</option>
+
+            <option value="ADMIN">Administrator</option>
+          </select>
+
+          <!-- LOGIN BUTTON -->
+
+          <button type="button" id="loginButton" onclick="login()">
+            Sign In
+          </button>
+
+          <!-- MESSAGE -->
+
+          <div id="message" class="message"></div>
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+          <span> 🛡️ Privacy-first AI </span>
+
+          <span> 🌍 Real-time Risk Intelligence </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+
+    <script src="../static/js/login.js?v=2"></script>
+  </body>
+</html>

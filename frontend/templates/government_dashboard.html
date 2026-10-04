@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        AquaSentinel AI | Government
+    </title>
+
+
+    <!-- =====================================================
+         DASHBOARD CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../static/css/dashboard.css"
+    >
+
+
+    <!-- =====================================================
+         LEAFLET CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        crossorigin=""
+    >
+
+
+    <!-- =====================================================
+         GOVERNMENT MAP EXTRA CSS
+         ===================================================== -->
+
+    <style>
+
+        /* =================================================
+           GOVERNMENT MAP
+           ================================================= */
+
+        .government-map {
+
+            position: relative;
+
+            width: 100%;
+
+            background: #ffffff;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            border: 1px solid #e2e8f0;
+        }
+
+
+        /* =================================================
+           REAL LEAFLET MAP
+           ================================================= */
+
+        #governmentRiskMap {
+
+            width: 100% !important;
+
+            height: 520px !important;
+
+            min-height: 520px !important;
+
+            position: relative;
+
+            z-index: 1;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+        }
+
+
+        #governmentRiskMap .leaflet-container {
+
+            width: 100%;
+
+            height: 100%;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+
+        /*
+         * Prevent dashboard CSS from
+         * breaking Leaflet tiles.
+         */
+
+        #governmentRiskMap img.leaflet-tile {
+
+            max-width: none !important;
+
+            max-height: none !important;
+        }
+
+
+        #governmentRiskMap .leaflet-tile {
+
+            max-width: none !important;
+
+            max-height: none !important;
+        }
+
+
+        /* =================================================
+           MAP LIVE BADGE
+           ================================================= */
+
+        .government-map-live {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 8px 14px;
+
+            border-radius: 999px;
+
+            background: #ecfdf5;
+
+            color: #059669;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .government-map-live-dot {
+
+            width: 8px;
+
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #10b981;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(16, 185, 129, 0.12);
+        }
+
+
+        /* =================================================
+           LOCATION MARKER
+           ================================================= */
+
+        .government-location-marker-wrapper {
+
+            background: transparent;
+
+            border: none;
+        }
+
+
+        .government-location-marker {
+
+            width: 18px;
+
+            height: 18px;
+
+            border-radius: 50%;
+
+            background: #7c3aed;
+
+            border: 4px solid #ffffff;
+
+            box-shadow:
+
+                0 0 0 6px
+                rgba(124, 58, 237, 0.25),
+
+                0 4px 12px
+                rgba(0, 0, 0, 0.30);
+        }
+
+
+        /* =================================================
+           FLOOD MAP LEGEND
+           ================================================= */
+
+        .government-map-legend {
+
+            position: absolute;
+
+            right: 20px;
+
+            bottom: 85px;
+
+            z-index: 1000;
+
+            min-width: 150px;
+
+            padding: 14px 16px;
+
+            background:
+                rgba(255, 255, 255, 0.96);
+
+            backdrop-filter:
+                blur(8px);
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 8px 25px
+                rgba(15, 23, 42, 0.16);
+        }
+
+
+        .government-map-legend-title {
+
+            margin-bottom: 9px;
+
+            color: #172554;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+
+        .government-legend-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin: 6px 0;
+
+            color: #475569;
+
+            font-size: 12px;
+        }
+
+
+        .government-legend-color {
+
+            display: inline-block;
+
+            width: 13px;
+
+            height: 13px;
+
+            border-radius: 4px;
+        }
+
+
+        /* =================================================
+           MAP INFORMATION
+           ================================================= */
+
+        .government-map-information {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr 1fr;
+
+            gap: 15px;
+
+            padding: 16px;
+
+            background: #f8fafc;
+
+            border-top:
+                1px solid #e2e8f0;
+        }
+
+
+        .government-map-info-item {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 5px;
+        }
+
+
+        .government-map-info-item span {
+
+            color: #64748b;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.05em;
+        }
+
+
+        .government-map-info-item strong {
+
+            color: #172554;
+
+            font-size: 14px;
+        }
+
+
+        /* =================================================
+           MAP POPUP
+           ================================================= */
+
+        .government-map-popup {
+
+            min-width: 240px;
+        }
+
+
+        .government-map-popup h4 {
+
+            margin:
+                0 0 10px;
+
+            color: #172554;
+
+            font-size: 15px;
+        }
+
+
+        .government-map-popup p {
+
+            margin: 5px 0;
+
+            color: #475569;
+
+            font-size: 12px;
+        }
+
+
+        .government-map-popup strong {
+
+            color: #172554;
+        }
+
+
+        /* =================================================
+           MOBILE
+           ================================================= */
+
+        @media (max-width: 768px) {
+
+            #governmentRiskMap {
+
+                height: 420px !important;
+
+                min-height: 420px !important;
+            }
+
+
+            .government-map-information {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .government-map-legend {
+
+                right: 10px;
+
+                bottom: 95px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         DASHBOARD
+         ===================================================== -->
+
+    <div class="dashboard">
+
+
+        <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+        <aside class="sidebar government-sidebar">
+
+
+            <!-- BRAND -->
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🏛️
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        AquaSentinel
+                    </h2>
+
+                    <span>
+                        Government Portal
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- NAVIGATION -->
+
+            <nav>
+
+
+                <button
+                    type="button"
+                    class="nav-item active"
+                    onclick="navigateGovernment('overviewSection', this)"
+                >
+
+                    📊 Overview
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="nav-item"
+                    onclick="navigateGovernment('riskMapSection', this)"
+                >
+
+                    🗺️ Risk Map
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="nav-item"
+                    onclick="navigateGovernment('weatherSection', this)"
+                >
+
+                    🌧️ Weather
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="nav-item"
+                    onclick="navigateGovernment('infrastructureSection', this)"
+                >
+
+                    🏗️ Infrastructure
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="nav-item"
+                    onclick="navigateGovernment('emergencySection', this)"
+                >
+
+                    🚨 Emergency
+
+                </button>
+
+
+            </nav>
+
+
+            <!-- LOGOUT -->
+
+            <button
+                class="logout"
+                onclick="logout()"
+            >
+
+                🚪 Logout
+
+            </button>
+
+
+        </aside>
+
+
+        <!-- =================================================
+             MAIN CONTENT
+             ================================================= -->
+
+        <main
+            class="main-content"
+            id="overviewSection"
+        >
+
+
+            <!-- =================================================
+                 TOP BAR
+                 ================================================= -->
+
+            <header class="topbar">
+
+
+                <div>
+
+                    <p class="eyebrow">
+                        GOVERNMENT CONTROL CENTER
+                    </p>
+
+
+                    <h1>
+                        Flood Risk Monitoring
+                    </h1>
+
+
+                    <p class="muted">
+                        AI-powered situational awareness
+                        and early warning.
+                    </p>
+
+                </div>
+
+
+                <!-- PROFILE -->
+
+                <div class="profile">
+
+
+                    <div class="avatar government-avatar">
+                        G
+                    </div>
+
+
+                    <div>
+
+                        <strong id="profileName">
+                            Government Official
+                        </strong>
+
+
+                        <small>
+                            Authorized Officer
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+            </header>
+
+
+            <!-- =================================================
+                 CRITICAL ALERT
+                 ================================================= -->
+
+            <section
+                class="alert-card critical"
+                id="emergencySection"
+            >
+
+
+                <div class="alert-icon">
+                    🚨
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        High-Risk Areas Detected
+                    </strong>
+
+
+                    <p>
+                        AI models have identified
+                        potential flooding in multiple
+                        monitored zones.
+                    </p>
+
+                </div>
+
+
+                <span class="status-badge danger">
+                    HIGH RISK
+                </span>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 STATISTICS
+                 ================================================= -->
+
+            <section
+                class="stats-grid"
+                id="weatherSection"
+            >
+
+
+                <!-- RAINFALL -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon blue">
+                        🌧️
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Predicted Rainfall
+                        </span>
+
+
+                        <strong>
+                            124 mm
+                        </strong>
+
+
+                        <small>
+                            Next 24 hours
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- FLOOD PROBABILITY -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon purple">
+                        🌊
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Flood Probability
+                        </span>
+
+
+                        <strong>
+                            82%
+                        </strong>
+
+
+                        <small>
+                            High confidence
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- RISK LEVEL -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon red">
+                        🚨
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            High-Risk Zones
+                        </span>
+
+
+                        <strong>
+                            12
+                        </strong>
+
+
+                        <small>
+                            Require attention
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- RISK SCORE -->
+
+                <div class="stat-card">
+
+
+                    <div class="stat-icon green">
+                        🎯
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Risk Score
+                        </span>
+
+
+                        <strong id="governmentRiskScoreCard">
+                            --
+                        </strong>
+
+
+                        <small>
+                            AI risk assessment
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 LATEST ADMIN PREDICTION REPORT
+                 ================================================= -->
+
+            <section
+                class="panel"
+                id="predictionReportSection"
+            >
+
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <h2>
+                            Latest Admin Prediction Report
+                        </h2>
+
+
+                        <p id="reportRegion">
+                            Awaiting the latest admin prediction
+                        </p>
+
+                    </div>
+
+
+                    <span
+                        class="live"
+                        id="reportMode"
+                    >
+                        NO REPORT
+                    </span>
+
+
+                </div>
+
+
+                <div class="stats-grid">
+
+
+                    <!-- PREDICTED RAINFALL -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon blue">
+                            🌧️
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Predicted Rainfall
+                            </span>
+
+
+                            <strong id="reportRainfall">
+                                --
+                            </strong>
+
+
+                            <small>
+                                Millimeters
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- FLOOD PROBABILITY -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon purple">
+                            🌊
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Flood Probability
+                            </span>
+
+
+                            <strong id="reportFloodProbability">
+                                --
+                            </strong>
+
+
+                            <small>
+                                Current model output
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- RISK SCORE -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon red">
+                            📊
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Risk Score
+                            </span>
+
+
+                            <strong id="reportRiskScore">
+                                --
+                            </strong>
+
+
+                            <small>
+                                Out of 100
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- CONFIDENCE -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon green">
+                            🎯
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Confidence
+                            </span>
+
+
+                            <strong id="reportConfidence">
+                                --
+                            </strong>
+
+
+                            <small>
+                                Model confidence
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- INUNDATION AREA -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon blue">
+                            🗺️
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Inundation Area
+                            </span>
+
+
+                            <strong id="reportInundationArea">
+                                --
+                            </strong>
+
+
+                            <small>
+                                Square kilometers
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- PREDICTION ID -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-icon purple">
+                            🆔
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Prediction ID
+                            </span>
+
+
+                            <strong id="reportPredictionId">
+                                --
+                            </strong>
+
+
+                            <small id="reportUpdatedAt">
+                                Not available
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 INDIA-WIDE FLOOD RISK MAP
+                 ================================================= -->
+
+            <section
+                class="panel"
+                id="riskMapSection"
+            >
+
+
+                <!-- MAP HEADER -->
+
+                <div class="panel-header">
+
+
+                    <div>
+
+                        <h2>
+                            India Flood Risk Monitoring
+                        </h2>
+
+
+                        <p>
+                            AI-generated inundation risk zones
+                        </p>
+
+                    </div>
+
+
+                    <span class="government-map-live">
+
+                        <span
+                            class="government-map-live-dot"
+                        ></span>
+
+                        LIVE ANALYSIS
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     REAL LEAFLET MAP
+                     ================================================= -->
+
+                <div class="government-map">
+
+
+                    <div
+                        id="governmentRiskMap"
+                        class="government-risk-map"
+                    ></div>
+
+
+                    <!-- =================================================
+                         FLOOD RISK LEGEND
+                         ================================================= -->
+
+                    <div
+                        class="government-map-legend"
+                    >
+
+
+                        <div
+                            class="government-map-legend-title"
+                        >
+                            Flood Risk Level
+                        </div>
+
+
+                        <div
+                            class="government-legend-row"
+                        >
+
+                            <span
+                                class="government-legend-color"
+                                style="background:#22c55e;"
+                            ></span>
+
+                            Minimal
+
+                        </div>
+
+
+                        <div
+                            class="government-legend-row"
+                        >
+
+                            <span
+                                class="government-legend-color"
+                                style="background:#84cc16;"
+                            ></span>
+
+                            Low
+
+                        </div>
+
+
+                        <div
+                            class="government-legend-row"
+                        >
+
+                            <span
+                                class="government-legend-color"
+                                style="background:#eab308;"
+                            ></span>
+
+                            Moderate
+
+                        </div>
+
+
+                        <div
+                            class="government-legend-row"
+                        >
+
+                            <span
+                                class="government-legend-color"
+                                style="background:#f97316;"
+                            ></span>
+
+                            High
+
+                        </div>
+
+
+                        <div
+                            class="government-legend-row"
+                        >
+
+                            <span
+                                class="government-legend-color"
+                                style="background:#ef4444;"
+                            ></span>
+
+                            Critical
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MAP INFORMATION
+                         ================================================= -->
+
+                    <div
+                        class="government-map-information"
+                    >
+
+
+                        <!-- LOCATION -->
+
+                        <div
+                            class="government-map-info-item"
+                        >
+
+                            <span>
+                                Selected Location
+                            </span>
+
+
+                            <strong
+                                id="governmentMapRegion"
+                            >
+                                Awaiting latest prediction
+                            </strong>
+
+                        </div>
+
+
+                        <!-- RISK -->
+
+                        <div
+                            class="government-map-info-item"
+                        >
+
+                            <span>
+                                Risk Level
+                            </span>
+
+
+                            <strong
+                                id="governmentMapRisk"
+                            >
+                                --
+                            </strong>
+
+                        </div>
+
+
+                        <!-- RISK SCORE -->
+
+                        <div
+                            class="government-map-info-item"
+                        >
+
+                            <span>
+                                Risk Score
+                            </span>
+
+
+                            <strong
+                                id="governmentMapRiskScore"
+                            >
+                                --
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+            <!-- =================================================
+                 LOWER GRID
+                 ================================================= -->
+
+            <section
+                class="content-grid"
+                id="infrastructureSection"
+            >
+
+
+                <!-- PRIORITY ZONES -->
+
+                <div class="panel">
+
+
+                    <div class="panel-header">
+
+
+                        <div>
+
+                            <h2>
+                                Priority Zones
+                            </h2>
+
+
+                            <p>
+                                Areas requiring attention
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="zone-list">
+
+
+                        <div class="zone-row">
+
+                            <span>
+                                Zone A
+                            </span>
+
+
+                            <strong class="danger-text">
+                                Critical
+                            </strong>
+
+                        </div>
+
+
+                        <div class="zone-row">
+
+                            <span>
+                                Zone B
+                            </span>
+
+
+                            <strong class="danger-text">
+                                High
+                            </strong>
+
+                        </div>
+
+
+                        <div class="zone-row">
+
+                            <span>
+                                Zone C
+                            </span>
+
+
+                            <strong class="warning-text">
+                                Moderate
+                            </strong>
+
+                        </div>
+
+
+                        <div class="zone-row">
+
+                            <span>
+                                Zone D
+                            </span>
+
+
+                            <strong class="safe-text">
+                                Low
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- AI MODEL STATUS -->
+
+                <div class="panel">
+
+
+                    <div class="panel-header">
+
+
+                        <div>
+
+                            <h2>
+                                AI Model Status
+                            </h2>
+
+
+                            <p>
+                                Prediction system health
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="model-status">
+
+
+                        <div>
+
+                            <span>
+                                Weather Model
+                            </span>
+
+
+                            <strong class="online">
+                                ● Online
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Rainfall Model
+                            </span>
+
+
+                            <strong class="online">
+                                ● Online
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Flood Model
+                            </span>
+
+
+                            <strong class="online">
+                                ● Online
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                GIS Engine
+                            </span>
+
+
+                            <strong class="online">
+                                ● Online
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         LEAFLET JAVASCRIPT
+         ===================================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        crossorigin=""
+    ></script>
+
+
+    <!-- =====================================================
+         GOVERNMENT JAVASCRIPT
+         ===================================================== -->
+
+    <script
+        src="../static/js/government.js?v=3"
+    ></script>
+
+
+</body>
+
+</html>
